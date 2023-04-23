@@ -18,28 +18,46 @@ def calculate_confusion_matrix(result_frames: list, true_frames: list):
                 FN += 1
             else:
                 TN += 1
-    confusion_matrix[1][1] = TN
+    confusion_matrix[1, 1] = TN
     confusion_matrix[0, 0] = TP
     confusion_matrix[0, 1] = FP
     confusion_matrix[1, 0] = FN
     return confusion_matrix
 
 
+def calculate_frame_with_accuracy(frame: int):
+    accuracy = 5
+    frame_with_accuracy = []
+
+    left = frame - accuracy
+    right = frame + accuracy
+    if left < 0:
+        left = 0
+    for i in range(left, right + 1):
+        frame_with_accuracy.append(i)
+
+    return frame_with_accuracy
+
+
 def zeros_appending(result_frames: list, true_frames: list):
     matched_count = 0
     matched_frames = []
+
     for result_frame in result_frames:
-        if true_frames.__contains__(result_frame):
-            matched_frames.append(result_frame)
-            matched_count += 1
+        for accuracy_frame in calculate_frame_with_accuracy(result_frame):
+            if true_frames.__contains__(accuracy_frame):
+                result_frames[result_frames.index(result_frame)] = accuracy_frame
+                matched_frames.append(accuracy_frame)
+                matched_count += 1
+                break
 
     missing_on_result = true_frames.copy()
     missing_on_true = result_frames.copy()
+
     for matched_frame in matched_frames:
         missing_on_result.remove(matched_frame)
         missing_on_true.remove(matched_frame)
 
-    # result_size = len(true_frames) - matched_count + len(result_frames)
     for missing in missing_on_result:
         result_frames.append(missing)
     for missing in missing_on_true:

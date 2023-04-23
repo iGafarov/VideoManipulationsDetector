@@ -1,4 +1,4 @@
-# Person Detection and Tracking
+# Video Manipulations Detector
 ## Requirements
 - Python 3.7.2
 - requirements.txt

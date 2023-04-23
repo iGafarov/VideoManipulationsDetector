@@ -1,8 +1,7 @@
 import json
-from utils.path_resolver import absolute_path
 import numpy as np
-from utils.constants import manipulations_detection_result_path
-from utils.constants import true_manipulations_path
+from utils.constants import MANIPULATIONS_DETECTION_RESULT_PATH
+from utils.constants import TRUE_MANIPULATIONS_PATH
 
 
 def calculate_confusion_matrix(result_frames: list, true_frames: list):
@@ -65,9 +64,9 @@ def zeros_appending(result_frames: list, true_frames: list):
 
 
 if __name__ == '__main__':
-    with open(absolute_path(manipulations_detection_result_path), "r") as results_file:
+    with open(MANIPULATIONS_DETECTION_RESULT_PATH, "r") as results_file:
         all_manipulations = json.load(results_file)
-        with open(absolute_path(true_manipulations_path), "r") as true_results_file:
+        with open(TRUE_MANIPULATIONS_PATH, "r") as true_results_file:
             all_true_manipulations = json.load(true_results_file)
             for video_name in all_manipulations.keys():
                 manipulations = all_manipulations[video_name]

@@ -53,7 +53,7 @@ class VideoProcessor:
 
                 object_tracker.update(frame, detects)
 
-                 print("frame  x  y  w  h  id")
+                # print("frame  x  y  w  h  id")
 
                 for track in object_tracker.tracks:
                     (x1, y1, x2, y2) = track.bbox

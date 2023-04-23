@@ -1,2 +1,4 @@
 /venv
 .idea
+/dnn_model/*.weights
+/dnn_model/*.cfg

@@ -1,13 +1,13 @@
 import json
 import numpy as np
-from utils.constants import MANIPULATIONS_DETECTION_RESULT_PATH
-from utils.constants import TRUE_MANIPULATIONS_PATH
+from src.video_manipulations_detector.utils.constants import MANIPULATIONS_DETECTION_RESULT_PATH
+from src.video_manipulations_detector.utils.constants import TRUE_MANIPULATIONS_PATH
 
 
 def calculate_confusion_matrix(result_frames: list, true_frames: list):
     confusion_matrix = np.zeros((2, 2), dtype=int)
     TN, TP, FP, FN = 0, 0, 0, 0
-    for i in range(0, len(result_frames) - 1):
+    for i in range(0, len(result_frames)):
         if result_frames[i] > 0:
             if true_frames[i] > 0:
                 TP += 1

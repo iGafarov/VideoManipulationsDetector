@@ -1,4 +1,4 @@
-from utils.path_resolver import absolute_path
+from src.video_manipulations_detector.utils.path_resolver import absolute_path
 
 PATH_TO_VIDEOS = absolute_path("utils/video_paths").__str__()
 # Requirements for Object Detector

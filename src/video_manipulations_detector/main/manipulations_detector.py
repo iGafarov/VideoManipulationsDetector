@@ -5,7 +5,7 @@ class ManipulationsDetector:
         self.size_y = size_y
 
     def detect_manipulations(self, manipulations_percent):
-        speed_measurement = 5
+        speed_measurement = 4
         borders_fault_percent = 5
         if len(self.trajectories) != 0:
             detected_manipulations = []

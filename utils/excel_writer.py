@@ -9,7 +9,7 @@ class ExcelWriter:
 
     def write(self, all_manipulations: dict, remove_last_results: bool):
         if remove_last_results:
-         os.remove(self.output_path)
+            os.remove(self.output_path)
         workbook = xlsxwriter.Workbook(self.output_path)
         worksheet = workbook.add_worksheet()
         i = 0

@@ -8,7 +8,7 @@ CLASSES_PATH = absolute_path("dnn_model/classes.txt").__str__()
 # Requirements for Object Tracker
 ENCODER_MODEL_PATH = absolute_path("model_data/mars-small128.pb").__str__()
 # Result files
-EXCEL_RESULTS_PATH = absolute_path("resources/results.xlsx").__str__()
+EXCEL_RESULTS_PATH = absolute_path("results/results.xlsx").__str__()
 MANIPULATIONS_DETECTION_RESULT_PATH = absolute_path("results/json_results.json").__str__()
 TRUE_MANIPULATIONS_PATH = absolute_path("results/true_results.json").__str__()
 

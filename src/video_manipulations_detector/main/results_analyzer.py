@@ -95,5 +95,5 @@ if __name__ == '__main__':
                     result_frames.append(prev_frame + 1)
                 result_frames, true_frames = zeros_appending(result_frames, true_frames)
                 matrix = calculate_confusion_matrix(result_frames, true_frames)
-                print(matrix)
+                print(video_name + ': \n', matrix)
         print('prikol')

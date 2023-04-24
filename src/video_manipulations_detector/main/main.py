@@ -37,11 +37,12 @@ if __name__ == '__main__':
         all_logs[get_video_name(video_path)] = logs
         print('LOGS: ', logs)
     end = time.time()
+    general_time = end - start
+    print('general_time: ', general_time)
     if len(all_manipulations) != 0:
         ExcelWriter.write(excel_writer, all_manipulations, False)
         with open(MANIPULATIONS_DETECTION_RESULT_PATH, "w") as write_file:
             json.dump(all_manipulations, write_file)
         print(all_manipulations)
-    print('general_time: ', end - start)
 
 

@@ -2,6 +2,8 @@ import json
 import numpy as np
 from src.video_manipulations_detector.utils.constants import MANIPULATIONS_DETECTION_RESULT_PATH
 from src.video_manipulations_detector.utils.constants import TRUE_MANIPULATIONS_PATH
+from src.video_manipulations_detector.utils.constants import GRAPH_PATH
+import matplotlib.pyplot as plt
 
 
 def calculate_confusion_matrix(result_frames: list, true_frames: list):
@@ -81,11 +83,41 @@ def zeros_appending(result_frames: list, true_frames: list):
     return calculated_result_frames, calculated_true_frames
 
 
+def draw_graph(matrix_list: list):
+    TPR = []
+    FPR = []
+    index = 0
+    for matrix in matrix_list:
+        # if index == 13:
+        #     break
+        TN = matrix[1, 1]
+        TP = matrix[0, 0]
+        FP = matrix[0, 1]
+        FN = matrix[1, 0]
+        if TP == 0:
+            TPR.append(0.0)
+        else:
+            TPR.append(TP / (TP + FN))
+        if FP == 0:
+            FPR.append(0.0)
+        else:
+            FPR.append(FP / (TN + FP))
+        index += 1
+    plt.plot(FPR, TPR)
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    graph_path = GRAPH_PATH + '\\' + 'roc_auc' + '.png'
+    plt.savefig(graph_path)
+    print('FPR: ', FPR)
+    print('TPR: ', TPR)
+
+
 if __name__ == '__main__':
     with open(MANIPULATIONS_DETECTION_RESULT_PATH, "r") as results_file:
         all_manipulations = json.load(results_file)
         with open(TRUE_MANIPULATIONS_PATH, "r") as true_results_file:
             all_true_manipulations = json.load(true_results_file)
+            error_matrix_list = []
             for video_name in all_manipulations.keys():
                 manipulations = all_manipulations[video_name]
                 true_frames = all_true_manipulations[video_name]
@@ -94,6 +126,8 @@ if __name__ == '__main__':
                     prev_frame, _, _ = manipulation
                     result_frames.append(prev_frame + 1)
                 result_frames, true_frames = zeros_appending(result_frames, true_frames)
-                matrix = calculate_confusion_matrix(result_frames, true_frames)
-                print(video_name + ': \n', matrix)
+                error_matrix = calculate_confusion_matrix(result_frames, true_frames)
+                print(video_name + ': \n', error_matrix)
+                error_matrix_list.append(error_matrix)
+            draw_graph(error_matrix_list)
         print('prikol')

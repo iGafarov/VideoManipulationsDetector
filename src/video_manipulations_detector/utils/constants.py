@@ -11,4 +11,5 @@ ENCODER_MODEL_PATH = absolute_path("model_data/mars-small128.pb").__str__()
 EXCEL_RESULTS_PATH = absolute_path("results/results.xlsx").__str__()
 MANIPULATIONS_DETECTION_RESULT_PATH = absolute_path("results/json_results.json").__str__()
 TRUE_MANIPULATIONS_PATH = absolute_path("results/true_results.json").__str__()
+GRAPH_PATH = absolute_path("results/graphs").__str__()
 

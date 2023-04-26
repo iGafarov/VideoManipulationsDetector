@@ -1,12 +1,16 @@
 import json
 import numpy as np
+import cv2
 from src.video_manipulations_detector.utils.constants import MANIPULATIONS_DETECTION_RESULT_PATH
 from src.video_manipulations_detector.utils.constants import TRUE_MANIPULATIONS_PATH
 from src.video_manipulations_detector.utils.constants import GRAPH_PATH
+from src.video_manipulations_detector.utils.constants import PATH_TO_VIDEOS
+from src.video_manipulations_detector.utils.video_paths_collector import VideoPathsCollector
+from src.video_manipulations_detector.main.video_processor import get_video_name
 import matplotlib.pyplot as plt
 
 
-def calculate_confusion_matrix(result_frames: list, true_frames: list):
+def calculate_confusion_matrix(result_frames: list, true_frames: list, frames_number: int):
     confusion_matrix = np.zeros((2, 2), dtype=int)
     TN, TP, FP, FN = 0, 0, 0, 0
     for i in range(0, len(result_frames)):
@@ -18,8 +22,7 @@ def calculate_confusion_matrix(result_frames: list, true_frames: list):
         else:
             if true_frames[i] > 0:
                 FN += 1
-            else:
-                TN += 1
+    TN = frames_number - TP - FP - FN
     confusion_matrix[1, 1] = TN
     confusion_matrix[0, 0] = TP
     confusion_matrix[0, 1] = FP
@@ -83,6 +86,18 @@ def zeros_appending(result_frames: list, true_frames: list):
     return calculated_result_frames, calculated_true_frames
 
 
+def collect_frames_counts():
+    video_paths_collector = VideoPathsCollector(PATH_TO_VIDEOS)
+    frames_counts = {}
+    for video_path in video_paths_collector.collect():
+        cap = cv2.VideoCapture(video_path)
+        frames_count = 0
+        if cap.isOpened:
+            frames_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        frames_counts[get_video_name(video_path)] = frames_count
+    return frames_counts
+
+
 def draw_graph(matrix_list: list):
     TPR = []
     FPR = []
@@ -118,6 +133,7 @@ if __name__ == '__main__':
         with open(TRUE_MANIPULATIONS_PATH, "r") as true_results_file:
             all_true_manipulations = json.load(true_results_file)
             error_matrix_list = []
+            frames_counts = collect_frames_counts()
             for video_name in all_manipulations.keys():
                 manipulations = all_manipulations[video_name]
                 true_frames = all_true_manipulations[video_name]
@@ -126,7 +142,7 @@ if __name__ == '__main__':
                     prev_frame, _, _ = manipulation
                     result_frames.append(prev_frame + 1)
                 result_frames, true_frames = zeros_appending(result_frames, true_frames)
-                error_matrix = calculate_confusion_matrix(result_frames, true_frames)
+                error_matrix = calculate_confusion_matrix(result_frames, true_frames, frames_counts[video_name])
                 print(video_name + ': \n', error_matrix)
                 error_matrix_list.append(error_matrix)
             draw_graph(error_matrix_list)

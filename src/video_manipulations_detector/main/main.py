@@ -18,7 +18,7 @@ excel_writer = ExcelWriter(EXCEL_RESULTS_PATH)
 if __name__ == '__main__':
     videos_paths = video_paths_collector.collect()
     all_manipulations = {}
-    all_logs = {}
+    # all_logs = {}
     each_video_time = []
     start = time.time()
     for video_path in videos_paths:
@@ -31,11 +31,11 @@ if __name__ == '__main__':
         tracks_per_frame, size_x, size_y = video_processor.process_video(0, detector, tracker)
 
         manipulations_detector = ManipulationsDetector(tracks_per_frame, size_x, size_y)
-        manipulations, logs = manipulations_detector.detect_manipulations(65)
+        manipulations = manipulations_detector.detect_manipulations(65)
         print('Manipulations on ', video_path, ':\n', manipulations)
         all_manipulations[get_video_name(video_path)] = manipulations
-        all_logs[get_video_name(video_path)] = logs
-        print('LOGS: ', logs)
+        # all_logs[get_video_name(video_path)] = logs
+        # print('LOGS: ', logs)
     end = time.time()
     general_time = end - start
     print('general_time: ', general_time)

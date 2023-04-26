@@ -9,7 +9,7 @@ class ManipulationsDetector:
         borders_fault_percent = 5
         if len(self.trajectories) != 0:
             detected_manipulations = []
-            logs = []
+            # logs = []
             for frame_number in self.trajectories.keys():
                 saved_ids = []
 
@@ -100,18 +100,18 @@ class ManipulationsDetector:
                             # print('potential_y: ', potential_y)
                             # print('cur_y: ', cur_y)
                             # print('av_y: ', av_y)
-                    print('===============================================================')
-                    print('FRAMES: ', prev_prev_frame_number, '-', frame_number)
-                    print('Manipulated ids: ', manipulated_ids)
-                    print('Prev Prev ids: ', ids_on_prev_prev_frame)
-                    print('Prev ids: ', ids_on_prev_frame)
-                    print('Cur ids: ', ids_on_current_frame)
+                    # print('===============================================================')
+                    # print('FRAMES: ', prev_prev_frame_number, '-', frame_number)
+                    # print('Manipulated ids: ', manipulated_ids)
+                    # print('Prev Prev ids: ', ids_on_prev_prev_frame)
+                    # print('Prev ids: ', ids_on_prev_frame)
+                    # print('Cur ids: ', ids_on_current_frame)
 
                     calculated_manipulations_percent = (len(manipulated_ids) / len(ids_on_prev_prev_frame)) * 100
-                    print('Calculated percent: ', calculated_manipulations_percent)
-                    print('===============================================================')
+                    # print('Calculated percent: ', calculated_manipulations_percent)
+                    # print('===============================================================')
 
-                    logs.append((prev_prev_frame_number, calculated_manipulations_percent))
+                    # logs.append((prev_prev_frame_number, calculated_manipulations_percent))
 
                     if calculated_manipulations_percent >= manipulations_percent:
                         if prev_prev_frame_number == 1 and frame_number == 3:
@@ -127,7 +127,7 @@ class ManipulationsDetector:
                                 (prev_prev_frame_number, frame_number, calculated_manipulations_percent))
 
                             print('DETECTEEEED')
-            return detected_manipulations, logs
+            return detected_manipulations
 
     def calculate_average_speed(self, object_id):
         coord_deltas = []

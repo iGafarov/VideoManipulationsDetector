@@ -150,7 +150,7 @@ if __name__ == '__main__':
                 true_frames = all_true_manipulations[video_name]
                 result_frames = []
                 for manipulation in manipulations:
-                    _, frame = manipulation
+                    frame, _, _ = manipulation
                     contains = False
                     for result_frame in calculate_frame_with_accuracy(frame):
                         if result_frames.__contains__(result_frame):

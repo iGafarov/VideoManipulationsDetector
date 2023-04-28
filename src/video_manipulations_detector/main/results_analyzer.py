@@ -97,6 +97,20 @@ def zeros_appending(result_frames: list, true_frames: list, frames_number: int):
     return y_pred, y_true
 
 
+def calculate_samples_with_percent(manipulations: list, true_frames: list, frames_number: int):
+    y_true = np.zeros(frames_number)
+    for i in range(1, frames_number + 1):
+        if true_frames.__contains__(i):
+            y_true[i - 1] = 1.0
+
+    y_pred = np.zeros(frames_number)
+    for manipulation in manipulations:
+        frame, percent = manipulation
+        y_pred[frame - 1] = percent / 100
+
+    return y_pred, y_true
+
+
 def collect_frames_counts():
     video_paths_collector = VideoPathsCollector(PATH_TO_VIDEOS)
     frames_counts = {}
@@ -136,6 +150,17 @@ def collect_frames_counts():
 #     plt.savefig(graph_path)
 #     print('FPR: ', FPR)
 #     print('TPR: ', TPR)
+def draw_graph(pred, true, name):
+    print('y_pred: ', pred)
+    print('y_true: ', true)
+    fpr, tpr, threshold = roc_curve(true, pred)
+    roc_auc_score(true, pred)
+    plt.plot(fpr, tpr)
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    graph_path = GRAPH_PATH + '\\' + name + '_roc_auc' + '.png'
+    plt.savefig(graph_path)
+    plt.close()
 
 
 if __name__ == '__main__':
@@ -145,23 +170,49 @@ if __name__ == '__main__':
             all_true_manipulations = json.load(true_results_file)
             error_matrix_list = []
             frames_counts = collect_frames_counts()
+            y_preds = []
+            y_trues = []
             for video_name in all_manipulations.keys():
                 manipulations = all_manipulations[video_name]
                 true_frames = all_true_manipulations[video_name]
-                result_frames = []
-                for manipulation in manipulations:
-                    frame, _, _ = manipulation
-                    contains = False
-                    for result_frame in calculate_frame_with_accuracy(frame):
-                        if result_frames.__contains__(result_frame):
-                            contains = True
-                    if not contains:
-                        result_frames.append(frame)
-                y_pred, y_true = zeros_appending(result_frames, true_frames, frames_counts[video_name])
-                print('y_pred: ', y_pred)
-                print('y_true: ', y_true)
-                error_matrix = confusion_matrix(y_true, y_pred)
-                print(video_name + ': \n', error_matrix)
-                error_matrix_list.append(error_matrix)
-            # draw_graph(error_matrix_list)
+                if len(manipulations) < frames_counts[video_name] - 50:
+                    result_frames = []
+                    for manipulation in manipulations:
+                        frame, percent = manipulation
+                        contains = False
+                        for result_frame in calculate_frame_with_accuracy(frame):
+                            if result_frames.__contains__(result_frame):
+                                contains = True
+                        if not contains:
+                            result_frames.append(frame)
+                    y_pred, y_true = zeros_appending(result_frames, true_frames, frames_counts[video_name])
+                    print('y_pred: ', y_pred)
+                    print('y_true: ', y_true)
+                    error_matrix = confusion_matrix(y_true, y_pred)
+                    print(video_name + ': \n', error_matrix)
+                    error_matrix_list.append(error_matrix)
+                else:
+                    # y_pred = np.zeros(frames_counts[video_name])
+                    # for manipulation in manipulations:
+                    #     frame, percent = manipulation
+                    #     if frame == 3:
+                    #         y_pred.append(0.0)
+                    #         y_pred.append(0.0)
+                    #     y_pred.append(percent)
+                    y_pred, y_true = calculate_samples_with_percent(manipulations, true_frames, frames_counts[video_name])
+                    y_preds.append(y_pred)
+                    y_trues.append(y_true)
+                    print('y_pred: ', y_pred)
+                    print('y_true: ', y_true)
+                    # draw_graph(y_pred, y_true, video_name)
+            y_true_general = []
+            y_pred_general = []
+            for y_true in y_trues:
+                for percent in y_true:
+                    y_true_general.append(percent)
+
+            for y_pred in y_preds:
+                for percent in y_pred:
+                    y_pred_general.append(percent)
+            draw_graph(y_pred_general, y_true_general, 'general')
         print('prikol')

@@ -22,9 +22,8 @@ class ExcelWriter:
             if manipulations is None:
                 continue
             for manipulation in manipulations:
-                prev_frame, cur_frame, percent = manipulation
-                frames = '(%d - %d)' % (prev_frame, cur_frame)
-                worksheet.write(1 + j, 1 + i, frames)
+                cur_frame, percent = manipulation
+                worksheet.write(1 + j, 1 + i, cur_frame)
                 worksheet.write(1 + j, 2 + i, percent)
                 j += 1
             i += 3

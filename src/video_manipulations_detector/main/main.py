@@ -31,7 +31,7 @@ if __name__ == '__main__':
         tracks_per_frame, size_x, size_y = video_processor.process_video(0, detector, tracker)
 
         manipulations_detector = ManipulationsDetector(tracks_per_frame, size_x, size_y)
-        manipulations = manipulations_detector.detect_manipulations(65)
+        manipulations = manipulations_detector.detect_manipulations(0)
         print('Manipulations on ', video_path, ':\n', manipulations)
         all_manipulations[get_video_name(video_path)] = manipulations
         # all_logs[get_video_name(video_path)] = logs

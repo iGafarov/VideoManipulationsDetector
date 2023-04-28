@@ -11,6 +11,9 @@ class ManipulationsDetector:
             detected_manipulations = []
             # logs = []
             for frame_number in self.trajectories.keys():
+                if manipulations_percent == 0 and frame_number < 5:
+                    detected_manipulations.append((frame_number, 0.0))
+                    continue
                 saved_ids = []
 
                 tracks_on_current_frame = self.trajectories[frame_number]
@@ -112,21 +115,23 @@ class ManipulationsDetector:
                     # print('===============================================================')
 
                     # logs.append((prev_prev_frame_number, calculated_manipulations_percent))
+                    if manipulations_percent == 0:
+                        detected_manipulations.append(
+                            (frame_number, calculated_manipulations_percent))
+                    else:
+                        if calculated_manipulations_percent >= manipulations_percent:
+                            if prev_prev_frame_number == 1 and frame_number == 3:
+                                continue
+                            else:
+                                last_detected_id = len(detected_manipulations) - 1
+                                if last_detected_id >= 0:
+                                    from_frame, to_frame, _ = detected_manipulations[last_detected_id]
+                                    if prev_prev_frame_number - from_frame == 1:
+                                        detected_manipulations.pop(last_detected_id)
 
-                    if calculated_manipulations_percent >= manipulations_percent:
-                        if prev_prev_frame_number == 1 and frame_number == 3:
-                            continue
-                        else:
-                            last_detected_id = len(detected_manipulations) - 1
-                            if last_detected_id >= 0:
-                                from_frame, to_frame, _ = detected_manipulations[last_detected_id]
-                                if prev_prev_frame_number - from_frame == 1:
-                                    detected_manipulations.pop(last_detected_id)
-
-                            detected_manipulations.append(
-                                (prev_prev_frame_number, frame_number, calculated_manipulations_percent))
-
-                            print('DETECTEEEED')
+                                detected_manipulations.append(
+                                    (frame_number, calculated_manipulations_percent))
+                                print('DETECTEEEED')
             return detected_manipulations
 
     def calculate_average_speed(self, object_id):

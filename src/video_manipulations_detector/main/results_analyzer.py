@@ -150,7 +150,7 @@ def collect_frames_counts():
 #     plt.savefig(graph_path)
 #     print('FPR: ', FPR)
 #     print('TPR: ', TPR)
-def draw_graph(pred, true, name):
+def draw_roc_auc(pred, true, name):
     print('y_pred: ', pred)
     print('y_true: ', true)
     fpr, tpr, threshold = roc_curve(true, pred)
@@ -158,8 +158,23 @@ def draw_graph(pred, true, name):
     plt.plot(fpr, tpr)
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
-    graph_path = GRAPH_PATH + '\\' + name + '_roc_auc' + '.png'
+    graph_path = GRAPH_PATH + '\\rocauc\\' + name + '_roc_auc' + '.png'
+    print(name, '-auc: ', roc_auc_score(y_true, y_pred))
     plt.savefig(graph_path)
+    plt.close()
+
+
+def draw_graph(pred, name, frames_number):
+    frames = []
+    for i in range(0, frames_number):
+        frames.append(i)
+    graph_path = GRAPH_PATH + '\\graph\\' + name + '.png'
+    plt.title('Video forgery')
+    plt.xlabel('Frame Number')
+    plt.ylabel('Manipulations Percent')
+    plot_name = graph_path
+    plt.plot(frames, pred)
+    plt.savefig(plot_name)
     plt.close()
 
 
@@ -200,11 +215,12 @@ if __name__ == '__main__':
                     #         y_pred.append(0.0)
                     #     y_pred.append(percent)
                     y_pred, y_true = calculate_samples_with_percent(manipulations, true_frames, frames_counts[video_name])
+                    draw_graph(y_pred, video_name, frames_counts[video_name])
+                    draw_roc_auc(y_pred, y_true, video_name)
                     y_preds.append(y_pred)
                     y_trues.append(y_true)
                     print('y_pred: ', y_pred)
                     print('y_true: ', y_true)
-                    # draw_graph(y_pred, y_true, video_name)
             y_true_general = []
             y_pred_general = []
             for y_true in y_trues:
@@ -214,5 +230,5 @@ if __name__ == '__main__':
             for y_pred in y_preds:
                 for percent in y_pred:
                     y_pred_general.append(percent)
-            draw_graph(y_pred_general, y_true_general, 'general')
+            draw_roc_auc(y_pred_general, y_true_general, 'general')
         print('prikol')

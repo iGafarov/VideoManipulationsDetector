@@ -98,3 +98,46 @@ def calculate_samples_with_percent(manipulations: list, true_frames: list, frame
         y_pred[frame - 1] = percent / 100
 
     return y_pred, y_true
+
+
+def calculate_error_matrices(result_manipulations: dict, true_manipulations: dict, frames_numbers):
+    error_matrices = {}
+    for video_name in result_manipulations.keys():
+        manipulations = result_manipulations[video_name]
+        true_frames = true_manipulations[video_name]
+        result_frames = []
+        for manipulation in manipulations:
+            frame, percent = manipulation
+            contains = False
+            for result_frame in calculate_frame_with_accuracy(frame):
+                if result_frames.__contains__(result_frame):
+                    contains = True
+            if not contains:
+                result_frames.append(frame)
+        y_pred, y_true = zeros_appending(result_frames, true_frames, frames_numbers[video_name])
+        # print('y_pred: ', y_pred)
+        # print('y_true: ', y_true)
+        error_matrix = calculate_confusion_matrix(y_pred, y_true, frames_numbers[video_name])
+        error_matrices[video_name] = error_matrix
+        # print(video_name + ': \n', error_matrix)
+    return error_matrices
+
+
+def calculate_total_tp(error_matrices: dict):
+    total_tp = 0
+    for video_name in error_matrices.keys():
+        error_matrix = error_matrices[video_name]
+        TP = error_matrix[0, 0]
+        total_tp += TP
+    return total_tp
+
+
+def calculate_total_true_count(error_matrices: dict):
+    total_true_count = 0
+    for video_name in error_matrices.keys():
+        error_matrix = error_matrices[video_name]
+        TP = error_matrix[0, 0]
+        FN = error_matrix[1, 0]
+        total_true_count = total_true_count + TP + FN
+    return total_true_count
+

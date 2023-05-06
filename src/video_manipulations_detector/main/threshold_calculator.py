@@ -12,7 +12,7 @@ class ThresholdCalculator:
     def calculate_percent_via_neyman_pearson(self, expected_percent: float):
         neyman_pearson_percent = 100
         for i in range(0, 100):
-            neyman_pearson_percent = neyman_pearson_percent - i
+            neyman_pearson_percent = neyman_pearson_percent - 1
             all_result_manipulations_with_threshold = self.manipulations_formation_with_threshold(
                 neyman_pearson_percent)
             error_matrix_dict = calculate_error_matrices(

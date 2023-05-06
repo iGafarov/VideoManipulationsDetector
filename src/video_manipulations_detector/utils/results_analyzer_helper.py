@@ -50,17 +50,20 @@ def zeros_appending(result_frames: list, true_frames: list, frames_number: int):
     missing_on_result = true_frames.copy()
     missing_on_true = result_frames.copy()
 
+    true_frames_copy = true_frames.copy()
+    result_frames_copy = result_frames.copy()
+
     for matched_frame in matched_frames:
         missing_on_result.remove(matched_frame)
         missing_on_true.remove(matched_frame)
 
     for missing in missing_on_result:
-        result_frames.append(missing)
+        result_frames_copy.append(missing)
     for missing in missing_on_true:
-        true_frames.append(missing)
+        true_frames_copy.append(missing)
 
-    raw_calculated_result_frames = sorted(result_frames)
-    raw_calculated_true_frames = sorted(true_frames)
+    raw_calculated_result_frames = sorted(result_frames_copy)
+    raw_calculated_true_frames = sorted(true_frames_copy)
 
     index = 0
     for result_frame in raw_calculated_result_frames:

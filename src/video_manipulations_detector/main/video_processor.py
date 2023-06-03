@@ -74,7 +74,7 @@ class VideoProcessor:
                     print(frame_counter, " : ", x, y, w, h, id)
                     cv2.rectangle(frame, (x, y), (x + w, y + h), colors_list[(int)(id)], 2)
 
-            # cv2.imshow(get_video_name(self.video_path), frame)
+            cv2.imshow(get_video_name(self.video_path), frame)
 
             ret, frame = cap.read()
             if frame_counter > skip:

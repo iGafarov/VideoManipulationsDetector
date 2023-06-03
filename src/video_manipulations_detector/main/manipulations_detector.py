@@ -9,7 +9,6 @@ class ManipulationsDetector:
         borders_fault_percent = 5
         if len(self.trajectories) != 0:
             detected_manipulations = []
-            # logs = []
             for frame_number in self.trajectories.keys():
                 if manipulations_percent == 0 and frame_number < 5:
                     detected_manipulations.append((frame_number, 0.0))
@@ -48,13 +47,15 @@ class ManipulationsDetector:
                             manipulated_ids.remove(current_id)
                             # Getting saved ids from prev_prev to cur frame
                             saved_ids.append(current_id)
-                    # THIRD SITUATION (BORDERS)
+                    # SECOND SITUATION (BORDERS)
                     for current_id in ids_on_current_frame:
                         for track in tracks_on_prev_prev_frame:
                             if track.__contains__(current_id):
                                 x_border, y_border, _, _ = track[current_id]
                                 if x_border > self.size_x * ((100 - borders_fault_percent) / 100) or \
-                                        y_border > self.size_y * ((100 - borders_fault_percent) / 100):
+                                        x_border < self.size_x * (borders_fault_percent / 100) or \
+                                        y_border > self.size_y * ((100 - borders_fault_percent) / 100) or \
+                                        y_border < self.size_y * (borders_fault_percent / 100):
                                     if manipulated_ids.__contains__(current_id):
                                         manipulated_ids.remove(current_id)
 
@@ -71,7 +72,7 @@ class ManipulationsDetector:
                             ids_that_saved_from_prev_prev_to_prev_but_not_saved_from_prev_prev_to_cur.append(test_id)
                     # print('test_list: ', ids_that_saved_from_prev_prev_to_prev_but_not_saved_from_prev_prev_to_cur)
 
-                    # SECOND SITUATION
+                    # THIRD SITUATION
                     for saved_id in saved_ids:
                         (av_x, av_y) = self.calculate_average_speed(saved_id)
                         (potential_x, potential_y) = (0, 0)
@@ -96,25 +97,8 @@ class ManipulationsDetector:
                         if abs(cur_x - potential_x) > av_x * speed_measurement \
                                 or abs(cur_y - potential_y) > av_y * speed_measurement:
                             manipulated_ids.append(saved_id)
-                            # print('id: ', saved_id)
-                            # print('potential_x: ', potential_x)
-                            # print('cur_x: ', cur_x)
-                            # print('av_x: ', av_x)
-                            # print('potential_y: ', potential_y)
-                            # print('cur_y: ', cur_y)
-                            # print('av_y: ', av_y)
-                    # print('===============================================================')
-                    # print('FRAMES: ', prev_prev_frame_number, '-', frame_number)
-                    # print('Manipulated ids: ', manipulated_ids)
-                    # print('Prev Prev ids: ', ids_on_prev_prev_frame)
-                    # print('Prev ids: ', ids_on_prev_frame)
-                    # print('Cur ids: ', ids_on_current_frame)
 
                     calculated_manipulations_percent = (len(manipulated_ids) / len(ids_on_prev_prev_frame)) * 100
-                    # print('Calculated percent: ', calculated_manipulations_percent)
-                    # print('===============================================================')
-
-                    # logs.append((prev_prev_frame_number, calculated_manipulations_percent))
                     if manipulations_percent == 0:
                         detected_manipulations.append(
                             (frame_number, calculated_manipulations_percent))
@@ -131,7 +115,6 @@ class ManipulationsDetector:
 
                                 detected_manipulations.append(
                                     (frame_number, calculated_manipulations_percent))
-                                print('DETECTEEEED')
             return detected_manipulations
 
     def calculate_average_speed(self, object_id):

@@ -11,7 +11,7 @@ from threshold_calculator import ThresholdCalculator
 from src.video_manipulations_detector.utils.results_analyzer_helper import *
 
 
-EXPECTED_ALL_MANIPULATIONS_PERCENT = 80
+EXPECTED_ALL_MANIPULATIONS_PERCENT = 50
 
 
 def collect_frames_counts():
@@ -31,7 +31,7 @@ def draw_graph(pred, name, frames_number):
     for i in range(0, frames_number):
         frames.append(i)
     graph_path = GRAPH_PATH + '\\graph\\' + name + '.png'
-    plt.title('Video forgery')
+    plt.title('Video Manipulations')
     plt.xlabel('Frame Number')
     plt.ylabel('Manipulations Percent')
     plot_name = graph_path
@@ -46,13 +46,18 @@ def draw_graphs(result_manipulations: dict, true_manipulations: dict, frames_num
         true_frames = true_manipulations[video_name]
         y_pred, y_true = calculate_samples_with_percent(manipulations, true_frames, frames_numbers[video_name])
         draw_graph(y_pred, video_name, frames_numbers[video_name])
-        # print('y_pred: ', y_pred)
-        # print('y_true: ', y_true)
 
 
 def draw_error_matrices(error_matrices: dict):
+    general_matrix = np.zeros((2, 2), dtype=int)
     for video_name in error_matrices.keys():
-        print(video_name + ': \n', error_matrices[video_name])
+        matrix = error_matrices[video_name]
+        print(video_name + ': \n', matrix)
+        general_matrix[1, 1] = general_matrix[1, 1] + matrix[1, 1]
+        general_matrix[0, 0] = general_matrix[0, 0] + matrix[0, 0]
+        general_matrix[0, 1] = general_matrix[0, 1] + matrix[0, 1]
+        general_matrix[1, 0] = general_matrix[1, 0] + matrix[1, 0]
+    print('\n\ngeneral matrix:\n', general_matrix)
 
 
 if __name__ == '__main__':
